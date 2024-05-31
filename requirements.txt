@@ -2,3 +2,4 @@ python-dotenv
 openai
 newsapi-python
 requests
+streamlit
