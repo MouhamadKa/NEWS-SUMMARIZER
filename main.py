@@ -17,6 +17,9 @@ model = "gpt-4o"
 class AssistantManager:
     assistant_id = os.getenv("ASSISTANT_ID")
     thread_id = os.getenv("THREAD_ID")
+    # assistant_id = None
+    # thread_id = None
+    
     
     def __init__(self, model : str = model):
         self.client = client
@@ -174,11 +177,11 @@ def main():
                 name = "News Summarizer",
                 instructions = """Yow are a personal article summarizer Assistant who knows how to take a list of articles, titles, and descriptions and then write a short summary of all the news articles.
                     Please write the result articles in a nice readable form like this:
-                    Title: Champions League Final: Real Madrid Beats Liverpool for 14th Title.
-                    Source: The New York times.
-                    Author: Rory Smith, Tariq Panja and Andrew Das.
-                    Description: "A small, beautiful summary of two to three lines"
-                    Read more link
+                    - Article's itle: Champions League Final: Real Madrid Beats Liverpool for 14th Title.
+                    - Article's source: The New York times.
+                    - Article's author: Rory Smith, Tariq Panja and Andrew Das.
+                    - A description: "A small, beautiful summary of two to three lines"
+                    - A read more link
                     Also but two empty lines between each two articels""",
                 tools = [
                     {
@@ -208,7 +211,7 @@ def main():
                 role = "user",
                 content = f"Summarize the news on this topic {instructions}"
             )
-            manager.run_assistant(instructions="Summarizr the news and make sure to mention the link to it at the end of each article.")
+            manager.run_assistant(instructions="Summarize the news and make sure to mention the link to it at the end of each article.")
             
             
             # Wait for completion and process messages
