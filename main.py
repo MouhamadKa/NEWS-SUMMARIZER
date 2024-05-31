@@ -62,7 +62,7 @@ def get_news(topic):
             
     
     except requests.exceptions.RequestException as e:
-        # print("Error occured during api request,", e)
+        print("Error occured during api request,", e)
         
         
 class AssistantManager:
@@ -153,7 +153,7 @@ class AssistantManager:
             
             if func_name == "get_news":
                 output = get_news(topic=arguments["topic"])
-                print(f"FUNCTION CALLING OUTPUT =====> {output}")
+                # print(f"FUNCTION CALLING OUTPUT =====> {output}")
                 
                 finall_str = ''
                 for item in output:
