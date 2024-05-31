@@ -1,68 +1,17 @@
 import json
 import os
 import openai
-from dotenv import find_dotenv, load_dotenv
-import requests
+from dotenv import load_dotenv
 import logging
 import time
 from datetime import datetime
 import streamlit as st
+from get_news_api import get_news
+
 
 load_dotenv()
-
-news_api_key = os.getenv("NEWS_API_KEY")
-# print(news_api_key)
-
 client = openai.OpenAI()
-model = "gpt-3.5-turbo-16k"
-
-
-def get_news(topic):
-    url = (
-        f"https://newsapi.org/v2/everything?q={topic}&apiKey={news_api_key}&pageSize=5"
-    )
-    
-    try:
-        response = requests.get(url)
-        if response.status_code == 200:
-            news = json.dumps(response.json(), indent=4) # Serialize obj to a JSON formatted str
-            # Now I am gonna convert that string to a python dictionary so I am gonna be able to access its fields easily
-            news = json.loads(news)
-            data = news
-            
-            # Access all the fields == Loop through
-            status = data["status"]
-            totalResults = data["totalResults"]
-            articles = data["articles"]
-            
-            final_news = []
-            # Loop through the articles
-            for article in articles:
-                source_name = article["source"]["name"]
-                author = article["author"]
-                title = article["title"]
-                description = article["description"]
-                url = article["url"]
-                content = article["content"]
-                
-                title_descritiopn = f"""
-                    Title: {title},
-                    Author: {author},
-                    Source: {source_name},
-                    Description: {description}
-                    URL: {url}
-                """
-                final_news.append(title_descritiopn)
-                
-            return final_news
-        
-        else:
-            #print(response.status_code)
-            return []
-            
-    
-    except requests.exceptions.RequestException as e:
-        print("Error occured during api request,", e)
+model = "gpt-4o"
         
         
 class AssistantManager:
@@ -223,13 +172,20 @@ def main():
         if submit_button:
             manager.create_assistant(
                 name = "News Summarizer",
-                instructions = "Yow are a personal article summarizer Assistant who knows how to take a list of articles, titles, and descriptions and then write a short summary of all the news articles.",
+                instructions = """Yow are a personal article summarizer Assistant who knows how to take a list of articles, titles, and descriptions and then write a short summary of all the news articles.
+                    Please write the result articles in a nice readable form like this:
+                    Title: Champions League Final: Real Madrid Beats Liverpool for 14th Title.
+                    Source: The New York times.
+                    Author: Rory Smith, Tariq Panja and Andrew Das.
+                    Description: "A small, beautiful summary of two to three lines"
+                    Read more link
+                    Also but two empty lines between each two articels""",
                 tools = [
                     {
                     "type" : "function",
                     "function" : {
                         "name" : "get_news",
-                        "description" : "Fet the list of articles/news fot the given topic",
+                        "description" : "Get list of articles/news for the given topic",
                         "parameters" : {
                             "type" : "object",
                             "properties" : {
